@@ -1,37 +1,22 @@
 "use client"
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
+import NavItem from './NavItem';
+import SubNavItem from './SubNavItem';
 
-interface NavItemProps {
-    icon: React.ReactNode;
-    label: string;
-    isActive?: boolean;
-    hasChevron?: boolean;
-    isCollapsed?: boolean;
-}
-
-const NavItem: React.FC<NavItemProps> = ({ icon, label, isActive = false, hasChevron = false, isCollapsed = false }) => (
-    <div className={`flex items-center justify-between px-6 py-2 rounded-lg cursor-pointer transition-colors ${isActive
-        ? 'text-[#00adee]'
-        : 'text-white hover:bg-[rgba(128,128,128,0.3)] hover:text-[#716aca]'
-        }`}>
-        <div className="flex items-center space-x-3">
-            <span className="text-md">{icon}</span>
-            {!isCollapsed && <span style={{ fontSize: '12px' }}>{label}</span>}
-        </div>
-        {hasChevron && !isCollapsed && (
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-        )}
-    </div>
-);
 
 const CollapsibleSidebar: React.FC = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const [expandedItem, setExpandedItem] = useState<string | null>(null);
+    const pathname = usePathname();
 
     const toggleSidebar = () => {
         setIsCollapsed(!isCollapsed);
+    };
+
+    const handleItemExpand = (itemName: string) => {
+        setExpandedItem(expandedItem === itemName ? null : itemName);
     };
 
     return (
@@ -48,7 +33,7 @@ const CollapsibleSidebar: React.FC = () => {
                         className='w-48 h-10 mr-6'
                     />
                 )}
-                <button className={`text-white ${isCollapsed ? 'p-2.5':''}`} onClick={toggleSidebar} >
+                <button className={`text-white ${isCollapsed ? 'p-2.5' : ''}`} onClick={toggleSidebar} >
                     <span className="group flex flex-col justify-between w-5 h-[18px] cursor-pointer ">
                         <span className={`block h-[1px] bg-white rounded transition-all duration-500 ${isCollapsed ? 'group-hover:w-5 w-3' : 'group-hover:w-5 w-3'
                             }`}></span>
@@ -73,8 +58,10 @@ const CollapsibleSidebar: React.FC = () => {
                         </i>
                     }
                     label="Dashboard"
-                    isActive={true}
+                    href="/dashboard"
+                    isActive={pathname === '/dashboard'}
                     isCollapsed={isCollapsed}
+                    pathname={pathname || ''}
                 />
 
                 <NavItem
@@ -94,7 +81,16 @@ const CollapsibleSidebar: React.FC = () => {
                     }
                     label="Games"
                     hasChevron={true}
+                    isActive={pathname?.startsWith('/games')}
                     isCollapsed={isCollapsed}
+                    pathname={pathname || ''}
+                    children={
+                        <>
+                            <SubNavItem label="Magic Portal" href="/games?name=magic-portal" />
+                            <SubNavItem label="Operation Mindfall" href="/games?name=operation-mindfall" />
+                            <SubNavItem label="Blackout" href="/games?name=blackout" />
+                        </>
+                    }
                 />
 
                 <NavItem
@@ -109,7 +105,16 @@ const CollapsibleSidebar: React.FC = () => {
                     }
                     label="Live Operator"
                     hasChevron={true}
+                    isActive={pathname?.startsWith('/live-operator')}
                     isCollapsed={isCollapsed}
+                    pathname={pathname || ''}
+                    children={
+                        <>
+                            <SubNavItem label="Magic Portal" href="/live-operator?name=magic-portal" />
+                            <SubNavItem label="Operation Mindfall" href="/live-operator?name=operation-mindfall" />
+                            <SubNavItem label="Blackout" href="/live-operator?name=blackout" />
+                        </>
+                    }
                 />
 
                 <NavItem
@@ -133,15 +138,23 @@ const CollapsibleSidebar: React.FC = () => {
                     }
                     label="Highscores"
                     hasChevron={true}
+                    isActive={pathname?.startsWith('/highscore')}
                     isCollapsed={isCollapsed}
+                    pathname={pathname || ''}
+                    children={
+                        <>
+                            <SubNavItem label="Magic Portal" href="/highscore?name=magic-portal" />
+                            <SubNavItem label="Operation Mindfall" href="/highscore?name=operation-mindfall" />
+                            <SubNavItem label="Blackout" href="/highscore?name=blackout" />
+                        </>
+                    }
                 />
 
                 <NavItem
                     icon={
-                        <img src="/stats.png" alt='stats' className='w-5 h-5'/>
+                        <img src="/stats.png" alt='stats' className='w-5 h-5' />
                     }
                     label="Statistics"
-                    hasChevron={true}
                     isCollapsed={isCollapsed}
                 />
 
