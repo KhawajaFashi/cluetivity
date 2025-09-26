@@ -1,9 +1,154 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import NavItem from './NavItem';
+import Link from 'next/link';
 import SubNavItem from './SubNavItem';
+
+interface NavItemProps {
+    icon: React.ReactNode;
+    label: string;
+    isActive?: boolean;
+    hasChevron?: boolean;
+    isCollapsed?: boolean;
+    href?: string;
+    children?: React.ReactNode;
+    pathname?: string;
+    expandedItem?: string | null;
+    setExpandedItem?: (item: string | null) => void;
+}
+
+const NavItem: React.FC<NavItemProps> = ({ icon, label, isActive = false, hasChevron = false, isCollapsed = false, href, children, pathname, expandedItem, setExpandedItem }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [userManuallyClosed, setUserManuallyClosed] = useState(false);
+    const [maxHeight, setMaxHeight] = useState('0px');
+    const childrenRef = React.useRef<HTMLDivElement>(null);
+
+    // Check if we're on any games page to keep Games menu open
+    const isOnGamesPage = pathname === '/games';
+    const shouldKeepGamesOpen = label === 'Games' && isOnGamesPage;
+
+    const isOnOperatorPage = pathname === '/operator';
+    const shouldKeepOperatorOpen = label === 'Live Operator' && isOnOperatorPage;
+
+    const isOnHighScorePage = pathname === '/highscores';
+    const shouldKeepHighScoreOpen = label === 'Highscores' && isOnHighScorePage;
+
+    // Auto-expand menu when on same pages and handle collapsing when another item is expanded
+    useEffect(() => {
+        // If this item is the expanded item, expand it
+        if (expandedItem === label) {
+            setIsExpanded(true);
+            setUserManuallyClosed(false);
+        }
+        // If another item is expanded, collapse this one
+        else if (expandedItem && expandedItem !== label) {
+            setIsExpanded(false);
+            setUserManuallyClosed(true);
+        }
+        // Auto-expand based on page URL (only if no item is manually expanded)
+        else if (!expandedItem) {
+            if (shouldKeepGamesOpen && !userManuallyClosed) {
+                setIsExpanded(true);
+            }
+            if (shouldKeepOperatorOpen && !userManuallyClosed) {
+                setIsExpanded(true);
+            }
+            if (shouldKeepHighScoreOpen && !userManuallyClosed) {
+                setIsExpanded(true);
+            }
+        }
+    }, [shouldKeepGamesOpen, shouldKeepOperatorOpen, shouldKeepHighScoreOpen, userManuallyClosed, expandedItem, label]);
+
+    // Reset manual close state when navigating away from games
+    useEffect(() => {
+        if (!isOnGamesPage && label === 'Games') {
+            setUserManuallyClosed(false);
+        }
+        if (!isOnOperatorPage && label === 'Live Operator') {
+            setUserManuallyClosed(false);
+        }
+        if (!isOnHighScorePage && label === 'Highscores') {
+            setUserManuallyClosed(false);
+        }
+    }, [isOnGamesPage, isOnOperatorPage, isOnHighScorePage, label]);
+
+    // Animate maxHeight for children expansion/collapse
+    useEffect(() => {
+        if (childrenRef.current) {
+            if (isExpanded && !isCollapsed) {
+                setMaxHeight(childrenRef.current.scrollHeight + 'px');
+            } else {
+                setMaxHeight('0px');
+            }
+        }
+    }, [isExpanded, isCollapsed, children]);
+
+    const handleClick = () => {
+        if (hasChevron && !isCollapsed) {
+            const newExpandedState = !isExpanded;
+
+            // If we're clicking the currently expanded item
+            if (expandedItem === label) {
+                setExpandedItem && setExpandedItem(null);
+                setIsExpanded(false);
+                setUserManuallyClosed(true);
+            }
+            // If we're clicking a different item
+            else {
+                setExpandedItem && setExpandedItem(label);
+                setIsExpanded(true);
+                setUserManuallyClosed(false);
+            }
+        }
+    };
+
+    const content = (
+        <div
+            className={`flex items-center justify-between px-6 py-2 rounded-lg cursor-pointer transition-colors ${isActive
+                ? 'text-[#00adee]'
+                : 'text-white hover:text-[#716aca]'
+                } ${!isCollapsed ? 'hover:bg-[rgba(128,128,128,0.3)]' : ''}`}
+            onClick={handleClick}
+        >
+            <div className="flex items-center space-x-3">
+                <span className="text-md">{icon}</span>
+                {!isCollapsed && <span style={{ fontSize: '12px' }}>{label}</span>}
+            </div>
+            {hasChevron && !isCollapsed && (
+                <svg className={`w-3 h-3 transition-transform ${isExpanded ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+            )}
+        </div>
+    );
+
+    // console.log("Expanded Item:", pathname, "Label:", label);
+
+    return (
+        <div>
+            {href ? (
+                <Link href={href}>
+                    {content}
+                </Link>
+            ) : (
+                content
+            )}
+            {/* Animated children expansion */}
+            <div
+                ref={childrenRef}
+                style={{
+                    maxHeight: children && isExpanded && !isCollapsed ? maxHeight : '0px',
+                    overflow: 'hidden',
+                    transition: 'max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                }}
+                className={`ml-6 ${children && isExpanded && !isCollapsed ? 'mt-2' : ''} space-y-1`}
+            >
+                {children}
+            </div>
+        </div>
+    );
+};
 
 
 const CollapsibleSidebar: React.FC = () => {
@@ -13,10 +158,6 @@ const CollapsibleSidebar: React.FC = () => {
 
     const toggleSidebar = () => {
         setIsCollapsed(!isCollapsed);
-    };
-
-    const handleItemExpand = (itemName: string) => {
-        setExpandedItem(expandedItem === itemName ? null : itemName);
     };
 
     return (
@@ -84,6 +225,8 @@ const CollapsibleSidebar: React.FC = () => {
                     isActive={pathname?.startsWith('/games')}
                     isCollapsed={isCollapsed}
                     pathname={pathname || ''}
+                    expandedItem={expandedItem}
+                    setExpandedItem={setExpandedItem}
                     children={
                         <>
                             <SubNavItem label="Magic Portal" href="/games?name=magic-portal" />
@@ -105,14 +248,16 @@ const CollapsibleSidebar: React.FC = () => {
                     }
                     label="Live Operator"
                     hasChevron={true}
-                    isActive={pathname?.startsWith('/live-operator')}
+                    isActive={pathname?.startsWith('/operator')}
                     isCollapsed={isCollapsed}
                     pathname={pathname || ''}
+                    expandedItem={expandedItem}
+                    setExpandedItem={setExpandedItem}
                     children={
                         <>
-                            <SubNavItem label="Magic Portal" href="/live-operator?name=magic-portal" />
-                            <SubNavItem label="Operation Mindfall" href="/live-operator?name=operation-mindfall" />
-                            <SubNavItem label="Blackout" href="/live-operator?name=blackout" />
+                            <SubNavItem label="Magic Portal" href="/operator?name=magic-portal" />
+                            <SubNavItem label="Operation Mindfall" href="/operator?name=operation-mindfall" />
+                            <SubNavItem label="Blackout" href="/operator?name=blackout" />
                         </>
                     }
                 />
@@ -138,14 +283,16 @@ const CollapsibleSidebar: React.FC = () => {
                     }
                     label="Highscores"
                     hasChevron={true}
-                    isActive={pathname?.startsWith('/highscore')}
+                    isActive={pathname?.startsWith('/highscores')}
                     isCollapsed={isCollapsed}
                     pathname={pathname || ''}
+                    expandedItem={expandedItem}
+                    setExpandedItem={setExpandedItem}
                     children={
                         <>
-                            <SubNavItem label="Magic Portal" href="/highscore?name=magic-portal" />
-                            <SubNavItem label="Operation Mindfall" href="/highscore?name=operation-mindfall" />
-                            <SubNavItem label="Blackout" href="/highscore?name=blackout" />
+                            <SubNavItem label="Magic Portal" href="/highscores?name=magic-portal" />
+                            <SubNavItem label="Operation Mindfall" href="/highscores?name=operation-mindfall" />
+                            <SubNavItem label="Blackout" href="/highscores?name=blackout" />
                         </>
                     }
                 />

@@ -14,7 +14,7 @@ const GameTable: React.FC<GameTableProps> = ({ gameData }) => {
             <div className="p-6 border-b border-gray-200">
                 <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
                     {/* Filter Button */}
-                    <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <button className="flex items-center space-x-2 px-4 py-2 bg-[#00adee] text-white rounded-lg transition-colors">
                         <span>Filter</span>
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -36,7 +36,7 @@ const GameTable: React.FC<GameTableProps> = ({ gameData }) => {
                     </div>
 
                     {/* Add Button */}
-                    <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <button className="px-4 py-2 bg-[#00adee] text-white rounded-lg">
                         {gameData.addButtonText}
                     </button>
                 </div>

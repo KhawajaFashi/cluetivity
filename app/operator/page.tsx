@@ -3,24 +3,24 @@ import CollapsibleSidebar from '../../components/CollapsibleSidebar';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import SupportButton from '../../components/SupportButton';
-import GameTable from '../../components/GameTable';
-import { getGameData } from '../../lib/gameConfig';
+import LiveOperator from '../../components/LiveOperator';
+import { getOperatorData } from '../../lib/LiveConfig';
 import { redirect } from 'next/navigation';
 
-interface GamesPageProps {
+interface OperatorPageProps {
     searchParams: {
         name?: string;
     };
 }
 
-export default async function GamesPage({ searchParams }: GamesPageProps) {
+export default async function OperatorPage({ searchParams }: OperatorPageProps) {
     const params = await searchParams;
-    const gameType = params?.name || 'magic-portal';
-    const gameData = getGameData(gameType);
+    const operatorType = params?.name || 'magic-portal';
+    const OperatorData = getOperatorData(operatorType);
 
     // If invalid game type, redirect to magic-portal
-    if (!gameData) {
-        redirect('/games?name=magic-portal');
+    if (!OperatorData) {
+        redirect('/operator?name=magic-portal');
     }
 
     return (
@@ -34,19 +34,19 @@ export default async function GamesPage({ searchParams }: GamesPageProps) {
                 <Header />
 
                 {/* Game Content */}
-                <main className="overflow-y-auto">
+                <main className="bg-white m-5 shadow-lg overflow-y-auto">
+                    <h1 className="text-3xl pl-6 pb-4 pt-3 font-bold text-gray-800 border-b border-gray-300 ">Live Operator</h1>
                     <div className='p-6'>
-                        <div className='bg-white rounded-lg shadow-sm mb-6 p-5'>
-                            <h1 className="text-3xl font-bold text-gray-800">{gameData.title}</h1>
-                        </div>
+                        {/* <div className='bg-white rounded-lg shadow-sm mb-6 p-5'> */}
+                        {/* </div> */}
 
                         {/* Game Table */}
-                        <GameTable gameData={gameData} />
+                        <LiveOperator />
                     </div>
 
                 </main>
-                {/* Footer */}
-                <Footer />
+                    {/* Footer */}
+                    <Footer />
             </div>
 
             {/* Support Button */}

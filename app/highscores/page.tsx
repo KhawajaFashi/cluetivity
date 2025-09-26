@@ -3,24 +3,24 @@ import CollapsibleSidebar from '../../components/CollapsibleSidebar';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import SupportButton from '../../components/SupportButton';
-import GameTable from '../../components/GameTable';
-import { getGameData } from '../../lib/gameConfig';
+import HighScore from '../../components/HighScore';
+import { getScoreData } from '../../lib/scoreConfig';
 import { redirect } from 'next/navigation';
 
-interface GamesPageProps {
+interface HighScorePageProps {
     searchParams: {
         name?: string;
     };
 }
 
-export default async function GamesPage({ searchParams }: GamesPageProps) {
+export default async function HighScorePage({ searchParams }: HighScorePageProps) {
     const params = await searchParams;
-    const gameType = params?.name || 'magic-portal';
-    const gameData = getGameData(gameType);
+    const highScoreType = params?.name || 'magic-portal';
+    const highScoreData = getScoreData(highScoreType);
 
     // If invalid game type, redirect to magic-portal
-    if (!gameData) {
-        redirect('/games?name=magic-portal');
+    if (!highScoreData) {
+        redirect('/highscores?name=magic-portal');
     }
 
     return (
@@ -29,24 +29,19 @@ export default async function GamesPage({ searchParams }: GamesPageProps) {
             <CollapsibleSidebar />
 
             {/* Main Content Area */}
-            <div className="w-screen flex flex-col justify-between">
+            <div className="w-screen flex flex-col">
                 {/* Header */}
                 <Header />
 
                 {/* Game Content */}
-                <main className="overflow-y-auto">
+                <main className="shadow-lg overflow-y-auto">
                     <div className='p-6'>
-                        <div className='bg-white rounded-lg shadow-sm mb-6 p-5'>
-                            <h1 className="text-3xl font-bold text-gray-800">{gameData.title}</h1>
-                        </div>
-
                         {/* Game Table */}
-                        <GameTable gameData={gameData} />
+                        <HighScore highScoreData={highScoreData} />
                     </div>
-
+                    {/* Footer */}
+                    <Footer />
                 </main>
-                {/* Footer */}
-                <Footer />
             </div>
 
             {/* Support Button */}
