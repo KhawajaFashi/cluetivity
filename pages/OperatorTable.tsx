@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Map from "../components/Google_map";
+import { OperatorData } from "@/lib/LiveConfig";
 
 interface TeamData {
     no: number;
@@ -14,74 +15,22 @@ interface TeamData {
     lng: number;
 }
 
-const LiveOperator = () => {
+interface OperatorTableProps {
+    OperatorData: OperatorData;
+}
+
+const OperatorTable: React.FC<OperatorTableProps> = ({ OperatorData }) => {
     const [mapView, setMapView] = useState<"map" | "satellite">("map");
     const [selectedTeam, setSelectedTeam] = useState<number | null>(null);
 
-    const teamData: TeamData[] = [
-        {
-            no: 1,
-            teamName: "Tiambiasovi",
-            score: "47800",
-            status: "WON",
-            timeLeft: "1 h 40 m",
-            battery: "100%",
-            startedOn: "23.07.2025",
-            lat: 52.5200, // Berlin
-            lng: 13.4050,
-        },
-        {
-            no: 2,
-            teamName: "Tiambiasovi",
-            score: "20000",
-            status: "LEFT",
-            timeLeft: "0 h 0 m",
-            battery: "10%",
-            startedOn: "23.07.2025",
-            lat: 50.1109, // Frankfurt
-            lng: 8.6821,
-        },
-        {
-            no: 3,
-            teamName: "Tiambiasovi",
-            score: "16700",
-            status: "LEFT",
-            timeLeft: "0 h 0 m",
-            battery: "20%",
-            startedOn: "23.07.2025",
-            lat: 51.3397, // Leipzig
-            lng: 12.3731,
-        },
-        {
-            no: 4,
-            teamName: "Tiama_123",
-            score: "1000",
-            status: "LEFT",
-            timeLeft: "0 h 0 m",
-            battery: "80%",
-            startedOn: "21.05.2025",
-            lat: 50.0755, // Prague
-            lng: 14.4378,
-        },
-        {
-            no: 5,
-            teamName: "Tiambiasovi",
-            score: "0",
-            status: "LEFT",
-            timeLeft: "0 h 0 m",
-            battery: "45%",
-            startedOn: "23.07.2025",
-            lat: 48.1351, // Munich
-            lng: 11.5820,
-        },
-    ];
+    const { teams } = OperatorData;
 
     return (
         <div className="flex flex-col">
             {/* Header Section */}
-            <div className="flex max-lg:flex-col max-lg:gap-4 justify-between items-center mb-6">
+            <div className="flex max-lg:flex-col max-lg:gap-4 justify-between items-center mb-6 font-semibold">
                 {/* Filter Dropdown */}
-                <button className="px-3 py-1 bg-[#00A3FF] text-white rounded-sm flex items-center gap-2">
+                <button className="px-3 py-1 bg-[var(--color-accent)] text-[var(--color-text-light)] rounded-[var(--border-radius-sm)] flex items-center gap-2">
                     Filter
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -104,7 +53,7 @@ const LiveOperator = () => {
                     </svg>
                     <input
                         type="text"
-                        placeholder="Search Team Name..."
+                        placeholder={OperatorData.searchPlaceholder}
                         className="pl-10 pr-4 py-1 border border-gray-300 rounded-lg w-64 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                 </div>
@@ -134,14 +83,14 @@ const LiveOperator = () => {
                         </div>
                     </div>
                     <div className="flex-1">
-                        <Map teams={teamData} selectedTeamNo={selectedTeam} />
+                        <Map teams={teams} selectedTeamNo={selectedTeam} />
                     </div>
                 </div>
                 {/* Table Section */}
                 <div className="w-[60%] max-lg:w-full bg-white rounded-lg shadow-sm overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-[12px]">
-                            <thead className="bg-[#1A2B42] text-white">
+                            <thead className="bg-[var(--color-table-header)] text-[var(--color-text-light)]">
                                 <tr>
                                     <th className="px-2 py-2 text-center text-sm font-medium">No</th>
                                     <th className="px-2 py-2 text-center text-sm font-medium">Team name</th>
@@ -159,7 +108,7 @@ const LiveOperator = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                                {teamData.map((team, index) => (
+                                {teams.map((team: TeamData, index: number) => (
                                     <tr
                                         key={index}
                                         className={`hover:bg-gray-50 cursor-pointer ${selectedTeam === team.no ? 'bg-blue-100' : ''}`}
@@ -190,11 +139,10 @@ const LiveOperator = () => {
                             </tbody>
                         </table>
                     </div>
-
                 </div>
             </div>
         </div>
     );
 };
 
-export default LiveOperator;
+export default OperatorTable;

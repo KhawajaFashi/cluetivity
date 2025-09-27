@@ -1,5 +1,5 @@
 import React from 'react';
-import OperatorTable from '@/pages/LiveOperator';
+import OperatorTable from '@/pages/OperatorTable';
 import { getOperatorData } from '@/lib/LiveConfig';
 import { redirect } from 'next/navigation';
 

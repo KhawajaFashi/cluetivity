@@ -106,8 +106,8 @@ const NavItem: React.FC<NavItemProps> = ({ icon, label, isActive = false, hasChe
     const content = (
         <div
             className={`flex items-center justify-between px-6 py-2 rounded-lg cursor-pointer transition-colors ${isActive
-                ? 'text-[#00adee]'
-                : 'text-white hover:text-[#716aca]'
+                ? 'text-[var(--color-primary)]'
+                : 'text-white hover:text-[var(--color-secondary)]'
                 } ${!isCollapsed ? 'hover:bg-[rgba(128,128,128,0.3)]' : ''}`}
             onClick={handleClick}
         >
@@ -123,12 +123,11 @@ const NavItem: React.FC<NavItemProps> = ({ icon, label, isActive = false, hasChe
         </div>
     );
 
-    // console.log("Expanded Item:", pathname, "Label:", label);
 
     return (
         <div>
             {href ? (
-                <Link href={href}>
+                <Link href={href} target={`${href === "https://cluetivity.zendesk.com/hc/en-us" ? '_blank' : ''}`}>
                     {content}
                 </Link>
             ) : (
@@ -163,30 +162,9 @@ const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({ isSidebarOpen =
 
     const toggleSidebar = () => setIsCollapsed(!isCollapsed);
     const CloseSidebar = () => setCloseSidebar(!isSidebarOpen);
-    // useEffect(() => {
-    //     const handleResize = () => {
-    //         if (window.innerWidth <= 1280) {
-    //             setIsCollapsed(false);
-    //             setCloseSidebar(!isSidebarOpen);
-    //             console.log("Window resized to <= 1280px", isCollapsed, isSidebarOpen);
-    //         }
-    //         else {
-    //             setCloseSidebar(!isSidebarOpen);
-    //         }
-    //     };
-
-    //     window.addEventListener('resize', handleResize);
-
-    //     // Run once on mount to handle initial state
-    //     handleResize();
-
-    //     return () => {
-    //         window.removeEventListener('resize', handleResize);
-    //     };
-    // }, []);
 
     return (
-        <div className={`bg-[#000f24] h-full flex flex-col transition-all duration-300 ${isCollapsed ? 'w-16' : ''
+        <div className={`bg-[var(--color-background-dark)] h-full flex flex-col transition-[var(--transition-normal)] ${isCollapsed ? 'w-16' : ''
             } ${!isSidebarOpen ? 'max-xl:hidden' : 'max-xl:fixed max-xl:z-10'}`}>
             {/* Logo Section */}
             <div className="xl:flex items-center justify-between px-4 py-2 hidden">
@@ -326,7 +304,9 @@ const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({ isSidebarOpen =
                         <img src="/stats.png" alt='stats' className='w-5 h-5' />
                     }
                     label="Statistics"
+                    isActive={pathname?.startsWith('/statistics')}
                     isCollapsed={isCollapsed}
+                    pathname={pathname || ''}
                 />
 
                 <NavItem
@@ -342,6 +322,7 @@ const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({ isSidebarOpen =
                         </i>
                     }
                     label="Help"
+                    href="https://cluetivity.zendesk.com/hc/en-us"
                     isCollapsed={isCollapsed}
                 />
             </nav>

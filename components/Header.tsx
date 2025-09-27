@@ -17,7 +17,7 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, onToggleSidebar }) => {
     };
 
     return (
-        <header className="xl:bg-white h-16 flex items-center w-full justify-between xl:justify-end bg-[#000f24] px-6 ">
+        <header className="xl:bg-white h-[var(--header-height)] flex items-center w-full justify-between xl:justify-end bg-[var(--color-background-dark)] px-6 ">
             <div className="hidden items-center justify-end xl:flex space-x-4 cursor-pointer" onClick={toggleProfile}>
                 <IoIosPerson color='#00adee' size='30px' />
             </div>
