@@ -1,9 +1,9 @@
-"use client"
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import SubNavItem from './SubNavItem';
+import { CgClose } from 'react-icons/cg';
 
 interface NavItemProps {
     icon: React.ReactNode;
@@ -151,20 +151,45 @@ const NavItem: React.FC<NavItemProps> = ({ icon, label, isActive = false, hasChe
 };
 
 
-const CollapsibleSidebar: React.FC = () => {
+interface CollapsibleSidebarProps {
+    isSidebarOpen?: boolean;
+}
+
+const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({ isSidebarOpen = true }) => {
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const [closeSidebar, setCloseSidebar] = useState(false);
     const [expandedItem, setExpandedItem] = useState<string | null>(null);
     const pathname = usePathname();
 
-    const toggleSidebar = () => {
-        setIsCollapsed(!isCollapsed);
-    };
+    const toggleSidebar = () => setIsCollapsed(!isCollapsed);
+    const CloseSidebar = () => setCloseSidebar(!isSidebarOpen);
+    // useEffect(() => {
+    //     const handleResize = () => {
+    //         if (window.innerWidth <= 1280) {
+    //             setIsCollapsed(false);
+    //             setCloseSidebar(!isSidebarOpen);
+    //             console.log("Window resized to <= 1280px", isCollapsed, isSidebarOpen);
+    //         }
+    //         else {
+    //             setCloseSidebar(!isSidebarOpen);
+    //         }
+    //     };
+
+    //     window.addEventListener('resize', handleResize);
+
+    //     // Run once on mount to handle initial state
+    //     handleResize();
+
+    //     return () => {
+    //         window.removeEventListener('resize', handleResize);
+    //     };
+    // }, []);
 
     return (
-        <div className={`bg-[#000f24] h-[100vh] flex flex-col transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-64'
-            }`}>
+        <div className={`bg-[#000f24] h-full flex flex-col transition-all duration-300 ${isCollapsed ? 'w-16' : ''
+            } ${!isSidebarOpen ? 'max-xl:hidden' : 'max-xl:fixed max-xl:z-10'}`}>
             {/* Logo Section */}
-            <div className="flex items-center justify-between px-4 py-2">
+            <div className="xl:flex items-center justify-between px-4 py-2 hidden">
                 {!isCollapsed && (
                     <Image
                         src="/clutivity_logo.png"
@@ -184,9 +209,8 @@ const CollapsibleSidebar: React.FC = () => {
                     </span>
                 </button>
             </div>
-
             {/* Navigation Items */}
-            <nav>
+            <nav className='max-xl:pt-5'>
                 <NavItem
                     icon={
                         <i className="m-menu__link-icon nyicn">

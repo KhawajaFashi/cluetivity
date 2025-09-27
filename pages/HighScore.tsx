@@ -12,12 +12,12 @@ const HighScore: React.FC<HighScoreProps> = ({ highScoreData }) => {
     return (
         <div>
             {/* Live Highscore Section */}
-            <div className="bg-white rounded-lg shadow-sm mb-8">
+            <div className="bg-white rounded-lg shadow-sm mb-8 w-full">
                 <div className="flex justify-between items-center px-8 pt-4 pb-2 border-b border-gray-200 mb-8">
                     <h2 className="text-2xl font-bold text-gray-800">Live Highscore</h2>
                     <button className="bg-[#00A3FF] text-white px-4 py-2 rounded-md font-medium">Add Highscore</button>
                 </div>
-                <div className="px-8 pb-8">
+                <div className="mx-8 max-lg:mx-3 pb-8 overflow-x-scroll">
                     <table className="w-full text-[14px]">
                         <thead>
                             <tr className="bg-[#0D1B2A] text-white">
@@ -48,11 +48,11 @@ const HighScore: React.FC<HighScoreProps> = ({ highScoreData }) => {
             </div>
 
             {/* Saved Highscore Section */}
-            <div className="bg-white rounded-lg shadow-sm">
+            <div className="bg-white rounded-lg shadow-sm w-full">
                 <div className="px-8 pt-4 pb-2 border-b border-gray-200 mb-8">
                     <h2 className="text-2xl font-bold text-gray-800">Saved Highscore</h2>
                 </div>
-                <div className="px-8 pb-8">
+                <div className="mx-8 max-lg:mx-3 pb-8 overflow-x-scroll pr-4">
                     <table className="w-full text-[14px]">
                         <thead>
                             <tr className="bg-[#0D1B2A] text-white">

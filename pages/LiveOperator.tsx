@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Map from "./Google_map";
+import Map from "../components/Google_map";
 
 interface TeamData {
     no: number;
@@ -79,7 +79,7 @@ const LiveOperator = () => {
     return (
         <div className="flex flex-col">
             {/* Header Section */}
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex max-lg:flex-col max-lg:gap-4 justify-between items-center mb-6">
                 {/* Filter Dropdown */}
                 <button className="px-3 py-1 bg-[#00A3FF] text-white rounded-sm flex items-center gap-2">
                     Filter
@@ -114,9 +114,9 @@ const LiveOperator = () => {
                 </button>
             </div>
             {/* Main Content */}
-            <div className="flex gap-6">
+            <div className="flex max-lg:flex-col gap-6">
                 {/* Map Section */}
-                <div className="w-[40%] bg-white rounded-lg shadow-sm overflow-hidden flex flex-col">
+                <div className="w-[40%] max-lg:w-full bg-white rounded-lg shadow-sm overflow-hidden flex flex-col">
                     <div className="p-2 border-b border-gray-200">
                         <div className="flex gap-2">
                             <button
@@ -138,7 +138,7 @@ const LiveOperator = () => {
                     </div>
                 </div>
                 {/* Table Section */}
-                <div className="w-[60%] bg-white rounded-lg shadow-sm overflow-hidden">
+                <div className="w-[60%] max-lg:w-full bg-white rounded-lg shadow-sm overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-[12px]">
                             <thead className="bg-[#1A2B42] text-white">

@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 
 interface ProfilePopupProps {
     isOpen: boolean;
