@@ -1,5 +1,5 @@
 import React from 'react';
-import OperatorTable from '@/pages/LiveOperator';
+import OperatorTable from '@/pages/OperatorTable';
 import { getOperatorData } from '@/lib/LiveConfig';
 import { redirect } from 'next/navigation';
 
@@ -19,10 +19,12 @@ export default async function GamesPage({ searchParams }: GamesPageProps) {
         redirect('/operator?name=magic-portal');
     }
 
+
+
     return (
-        <div className="h-full w-full bg-[#f2f3f8] p-6">
-            <div className='bg-white rounded-lg shadow-sm mb-6 p-5'>
-                <h1 className="text-3xl font-bold text-gray-800">{OperatorData.title}</h1>
+        <div className="h-full bg-white shadow-lg m-5 pb-2">
+            <div className='border-b border-gray-200 p-4'>
+                <h1 className="text-3xl font-bold text-gray-800">Live Operator</h1>
             </div>
 
             {/* Game Table */}

@@ -1,45 +1,63 @@
-import React from 'react';
+"use client";
+import React, { useRef, useState } from 'react';
 import { GameData } from '../lib/gameConfig';
+import FilterPopup from '@/components/GameFilterPopup';
 
 interface GameTableProps {
     gameData: GameData;
 }
 
 const GameTable: React.FC<GameTableProps> = ({ gameData }) => {
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+    const filterButtonRef = useRef<HTMLDivElement | null>(null);
+
 
 
     return (
         <div className="bg-white rounded-lg shadow-sm">
             {/* Controls Section */}
-            {/* <div className="p-6 border-b border-gray-200"> */}
-            <div className="flex xl:flex-row flex-col gap-4 items-center justify-between p-6 border-b border-gray-200">
-                {/* Filter Button */}
-                <button className="flex items-center space-x-2 px-4 py-2 bg-[#00adee] text-white rounded-lg transition-colors">
-                    <span>Filter</span>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                </button>
-
-                {/* Search Bar */}
-                <div className="flex-1 max-w-sm ">
-                    <div className="relative">
-                        <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <div className="flex max-lg:flex-col max-lg:gap-3 justify-between items-center mb-6 p-6 font-semibold">
+                {/* Filter Dropdown */}
+                <div
+                    ref={filterButtonRef}
+                    className="flex flex-col items-start gap-3">
+                    <button
+                        onClick={() => setIsFilterOpen(true)}
+                        className="px-2 py-1 bg-[#00A3FF] text-white rounded-sm flex items-center gap-2 whitespace-nowrap"
+                    >
+                        Filter
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
-                        <input
-                            type="text"
-                            placeholder={gameData.searchPlaceholder}
-                            className="w-full max-lg:text-[12px] pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                    </div>
+                    </button>
+                    <FilterPopup isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)} buttonRef={filterButtonRef} />
                 </div>
-
-                {/* Add Button */}
-                <button className="px-4 py-2 bg-[#00adee] text-white rounded-lg">
-                    {gameData.addButtonText}
+                {/* Search Bar */}
+                <div className="relative">
+                    <svg
+                        className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                        />
+                    </svg>
+                    <input
+                        type="text"
+                        placeholder={gameData?.searchPlaceholder}
+                        className="pl-10 pr-4 py-1 border border-gray-300 rounded-lg w-64 max-[350px]:w-48 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                </div>
+                {/* Animate Showdown Button */}
+                <button className="px-3 py-1 bg-[#00A3FF] text-white rounded-sm">
+                    Add new Route
                 </button>
-                {/* </div> */}
             </div>
 
             {/* Table */}
@@ -53,12 +71,12 @@ const GameTable: React.FC<GameTableProps> = ({ gameData }) => {
                                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                                 </svg>
                             </th>
-                            <th className="px-6 py-4 text-left text-sm font-medium">{gameData.columns.name}</th>
-                            <th className="px-6 py-4 text-left text-sm font-medium">{gameData.columns.count}</th>
-                            <th className="px-6 py-4 text-left text-sm font-medium">{gameData.columns.lang}</th>
+                            <th className="px-6 py-4 text-left text-sm font-medium">{gameData?.columns?.name}</th>
+                            <th className="px-6 py-4 text-left text-sm font-medium">{gameData?.columns?.count}</th>
+                            <th className="px-6 py-4 text-left text-sm font-medium">{gameData?.columns?.lang}</th>
                             <th className="px-6 py-4 text-left text-sm font-medium">
                                 <div className="flex items-center space-x-1">
-                                    <span>{gameData.columns.status}</span>
+                                    <span>{gameData?.columns?.status}</span>
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
@@ -66,19 +84,19 @@ const GameTable: React.FC<GameTableProps> = ({ gameData }) => {
                             </th>
                             <th className="px-6 py-4 text-left text-sm font-medium">
                                 <div className="flex items-center space-x-1">
-                                    <span>{gameData.columns.lastEdited}</span>
+                                    <span>{gameData?.columns?.lastEdited}</span>
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
                                     </svg>
                                 </div>
                             </th>
-                            <th className="px-6 py-4 text-left text-sm font-medium">{gameData.columns.action}</th>
+                            <th className="px-6 py-4 text-left text-sm font-medium">{gameData?.columns?.action}</th>
                         </tr>
                     </thead>
 
                     {/* Table Body */}
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {gameData.rows.map((row, index) => (
+                        {gameData?.rows?.map((row, index) => (
                             <tr key={index} className="hover:bg-gray-50">
                                 <td className="px-6 py-4">
                                     <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">

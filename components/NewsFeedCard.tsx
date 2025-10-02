@@ -9,7 +9,7 @@ const NewsFeedCard: React.FC = () => {
             <ul className="space-y-3">
                 <li>
                     <Link href="#" className="text-[#00adee] underline text-sm block">
-                        Cluetivity App-Update
+                        Live Team Games App-Update
                     </Link>
                 </li>
                 <li>
@@ -19,7 +19,7 @@ const NewsFeedCard: React.FC = () => {
                 </li>
                 <li>
                     <Link href="#" className="text-[#00adee] underline text-sm block">
-                        Cluetivity PRO Launch
+                        Live Team Games PRO Launch
                     </Link>
                 </li>
             </ul>

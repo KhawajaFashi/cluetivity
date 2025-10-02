@@ -25,7 +25,7 @@ const SubNavItem: React.FC<SubNavItemProps> = ({ label, href, isActive = false }
     );
 
     return (
-        <Link href={href} legacyBehavior>
+        <Link href={href}>
             <div className={`px-4 py-1 cursor-pointer transition-colors text-sm group ${isCurrentActive
                 ? 'text-[#00adee]'
                 : 'text-gray-300 hover:text-[rgb(128,128,128)]'

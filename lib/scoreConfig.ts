@@ -6,13 +6,13 @@ export interface scoreData {
     columns: {
         game: string,
         name: string,
-        teams: Number,
+        teams: number,
         lastEdited: string,
     };
     rows: Array<{
         game: string,
         name: string,
-        teams: Number,
+        teams: number,
         lastEdited: string,
     }> | [];
 }
