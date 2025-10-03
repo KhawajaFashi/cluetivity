@@ -1,14 +1,22 @@
 
 import React from "react";
 
-const savedHighscores: [] = [];
+interface HighscoreRow {
+    game?: string;
+    name?: string;
+    teams?: number | string;
+    lastEdited?: string;
+    savedHighscore?: string | number;
+}
+
+const savedHighscores: HighscoreRow[] = [];
 
 interface HighScoreProps {
-    highScoreData: any;
+    highScoreData?: { rows?: HighscoreRow[] };
 }
 
 const HighScore: React.FC<HighScoreProps> = ({ highScoreData }) => {
-    const liveHighscores = highScoreData?.rows || [];
+    const liveHighscores: HighscoreRow[] = highScoreData?.rows || [];
     return (
         <div>
             {/* Live Highscore Section */}
@@ -29,7 +37,7 @@ const HighScore: React.FC<HighScoreProps> = ({ highScoreData }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {liveHighscores.map((row: any, idx: number) => (
+                            {liveHighscores.map((row: HighscoreRow, idx: number) => (
                                 <tr key={idx} className={idx % 2 === 1 ? "bg-[#f7f8fa]" : ""}>
                                     <td className="py-2 px-2 text-center">{row.game}</td>
                                     <td className="py-2 px-2 text-center">{row.name}</td>
@@ -69,7 +77,7 @@ const HighScore: React.FC<HighScoreProps> = ({ highScoreData }) => {
                                     <td colSpan={5} className="text-center py-4 text-gray-400">No saved highscores</td>
                                 </tr>
                             ) : (
-                                savedHighscores.map((row: any, idx: number) => (
+                                savedHighscores.map((row: HighscoreRow, idx: number) => (
                                     <tr key={idx}>
                                         <td className="py-2 px-2 text-center">{row.game}</td>
                                         <td className="py-2 px-2 text-center">{row.name}</td>

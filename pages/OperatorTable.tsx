@@ -1,8 +1,19 @@
 "use client";
 import React, { useRef, useState } from "react";
-import Map from "../components/Google_map";
+import OperatorActionsMenu from '@/components/OperatorComponents/OperatorActionsMenu';
+import TeamDetailsTable from '@/components/TeamDetails/TeamDetailsTable';
+import Map from "../components/OperatorComponents/Google_map";
 import { OperatorData } from "@/lib/LiveConfig";
-import FilterPopup from "../components/OperatorFilterPopup";
+import FilterPopup from "../components/OperatorComponents/OperatorFilterPopup";
+
+interface Riddle {
+    no: number;
+    riddleName: string;
+    episode: number;
+    riddleType: string;
+    status: string;
+    score: number;
+}
 
 interface TeamData {
     no: number;
@@ -14,6 +25,7 @@ interface TeamData {
     startedOn: string;
     lat: number;
     lng: number;
+    riddles?: Riddle[];
 }
 
 interface OperatorTableProps {
@@ -27,6 +39,36 @@ const OperatorTable: React.FC<OperatorTableProps> = ({ OperatorData }) => {
 
     const { teams } = OperatorData ?? {};
     const filterButtonRef = useRef<HTMLDivElement | null>(null);
+
+    const [menuOpenIdx, setMenuOpenIdx] = useState<number | null>(null);
+    const [showTeamDetailsIdx, setShowTeamDetailsIdx] = useState<number | null>(null);
+
+    // Show TeamDetailsTable if requested
+    if (showTeamDetailsIdx !== null && teams && teams[showTeamDetailsIdx]) {
+        // Provide sample riddles if not present
+        const team = teams[showTeamDetailsIdx];
+        const riddles = [
+            { no: 1, riddleName: "Start the Mission", episode: 1, riddleType: "Augmented Reality", status: "SOLVED", score: 1000 },
+            { no: 2, riddleName: "The Key", episode: 2, riddleType: "Action Pack", status: "SOLVED", score: 3000 },
+            { no: 3, riddleName: "Visual Confirmation", episode: 3, riddleType: "Mini Game", status: "SOLVED", score: 2000 },
+            { no: 4, riddleName: "Secret Box", episode: 4, riddleType: "Augmented Reality", status: "SOLVED WRONG", score: 0 },
+            { no: 5, riddleName: "The Contact", episode: 5, riddleType: "Action Pack", status: "SKIPPED", score: 0 },
+            { no: 6, riddleName: "Listening Device", episode: 6, riddleType: "Mini Game", status: "UNSOLVED", score: 0 },
+            { no: 7, riddleName: "The Secret Safe", episode: 7, riddleType: "Augmented Reality", status: "UNSOLVED", score: 0 },
+            { no: 8, riddleName: "The Antivirus", episode: 8, riddleType: "Multiple Choice", status: "UNSOLVED", score: 0 },
+            { no: 8, riddleName: "The Antivirus", episode: 8, riddleType: "Multiple Choice", status: "UNSOLVED", score: 0 },
+            { no: 8, riddleName: "The Antivirus", episode: 8, riddleType: "Multiple Choice", status: "UNSOLVED", score: 0 },
+        ];
+        return (
+            <div className="flex flex-col p-4 w-full">
+                <TeamDetailsTable
+                    team={{ ...team, riddles }}
+                    onBack={() => setShowTeamDetailsIdx(null)}
+                    OperatorData={OperatorData}
+                />
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col p-4 w-full">
@@ -104,7 +146,7 @@ const OperatorTable: React.FC<OperatorTableProps> = ({ OperatorData }) => {
                             <tr>
                                 <th className="px-2 py-4 text-center text-sm font-medium">No</th>
                                 <th className="px-2 py-4 text-center text-sm font-medium">Team name</th>
-                                <th className="px-2 flex items-center justify-center py-4 text-center text-sm font-medium flex cursor-pointer">
+                                <th className="px-2 flex items-center justify-center py-4 text-center text-sm font-medium cursor-pointer">
                                     Score
                                     <svg className="inline-block w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -121,28 +163,32 @@ const OperatorTable: React.FC<OperatorTableProps> = ({ OperatorData }) => {
                             {teams?.map((team: TeamData, index: number) => (
                                 <tr
                                     key={index}
-                                    className={`hover:bg-gray-50 cursor-pointer ${selectedTeam === team.no ? 'bg-blue-100' : ''}`}
+                                    className={`hover:bg-gray-50 cursor-pointer ${selectedTeam === team.no ? '' : ''}`}
                                     onClick={() => setSelectedTeam(team.no)}
                                 >
-                                    <td className="px-2 py-1 text-center">{team.no}</td>
-                                    <td className="px-2 py-1 text-center">{team.teamName}</td>
-                                    <td className="px-2 py-1 text-center">{team.score}</td>
-                                    <td className="px-2 py-1 text-center">
-                                        <span className={`px-2 py-1 rounded`}>
+                                    <td className="px-2 py-2 text-center">{team.no}</td>
+                                    <td className="px-2 py-2 text-center">{team.teamName}</td>
+                                    <td className="px-2 py-2 text-center">{team.score}</td>
+                                    <td className="px-2 py-2 text-center">
+                                        <span className={`px-2 py-2 rounded`}>
                                             {team.status}
                                         </span>
                                     </td>
-                                    <td className="px-2 py-1 text-center">{team.timeLeft}</td>
-                                    <td className="px-2 py-1 text-center">
+                                    <td className="px-2 py-2 text-center">{team.timeLeft}</td>
+                                    <td className="px-2 py-2 text-center">
                                         <div className="flex items-center">
                                             {team.battery}
                                         </div>
                                     </td>
-                                    <td className="px-2 py-1 text-center">{team.startedOn}</td>
-                                    <td className="px-2 py-1 text-center">
-                                        <button className="text-gray-400 hover:text-gray-600">
-                                            <span className="font-bold text-xl">...</span>
-                                        </button>
+                                    <td className="px-2 py-2 text-center">{team.startedOn}</td>
+                                    <td className="px-2 py-2 text-center relative">
+                                        <OperatorActionsMenu
+                                            open={menuOpenIdx === index}
+                                            onOpen={() => setMenuOpenIdx(index)}
+                                            onClose={() => setMenuOpenIdx(null)}
+                                            team={team}
+                                            onTeamDetails={() => { setShowTeamDetailsIdx(index); setMenuOpenIdx(null); }}
+                                        />
                                     </td>
                                 </tr>
                             ))}

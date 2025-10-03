@@ -1,8 +1,8 @@
 "use client";
 import React from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, PieLabelRenderProps, TooltipProps } from 'recharts';
 
-interface PieData {
+interface PieData extends Record<string, unknown> {
     name: string;
     value: number;
     status: 'Won' | 'Left';
@@ -30,15 +30,18 @@ const COLORS = ['#5B8FF9', '#00C49F'];
 const BAR_COLOR = '#69b7eb';
 
 export default function StatisticsPage() {
-    const currentMonth = new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
 
     // Custom formatter for tooltip
-    const CustomTooltip = ({ active, payload }: any) => {
+    const CustomTooltip = (props: TooltipProps<number, string>) => {
+        const t = props as unknown as TooltipProps<number, string> & { payload?: Array<{ payload?: PieData }> };
+        const active = t.active;
+        const payload = t.payload as Array<{ payload?: PieData }> | undefined;
         if (active && payload && payload.length) {
+            const p = payload[0].payload as PieData;
             return (
                 <div className="bg-white p-3 shadow-lg rounded-lg border border-gray-100">
-                    <p className="text-sm">{`${payload[0].name}`}</p>
-                    <p className="text-sm font-semibold">{`${payload[0].value}%`}</p>
+                    <p className="text-sm">{p.name}</p>
+                    <p className="text-sm font-semibold">{p.value}%</p>
                 </div>
             );
         }
@@ -90,11 +93,14 @@ export default function StatisticsPage() {
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie
-                                    data={pieData as any}
+                                    data={pieData}
                                     cx="50%"
                                     cy="50%"
                                     labelLine={false}
-                                    label={({ percent }: any) => `${(percent * 100).toFixed(1)}%`}
+                                    label={(props: PieLabelRenderProps) => {
+                                        const percent = Number(props.percent ?? 0);
+                                        return `${(percent * 100).toFixed(1)}%`;
+                                    }}
                                     outerRadius={100}
                                     fill="#8884d8"
                                     dataKey="value"
@@ -111,11 +117,15 @@ export default function StatisticsPage() {
                                     layout="horizontal"
                                     verticalAlign="bottom"
                                     align="center"
-                                    formatter={(value, entry: any) => (
-                                        <span className="text-gray-700">
-                                            {entry.payload.status}: {entry.payload.value}%
-                                        </span>
-                                    )}
+                                    formatter={(value: string, entry: unknown) => {
+                                        // entry may be a legend item: try to read payload
+                                        const payload = (entry as unknown as { payload?: { status?: string; value?: number } }).payload;
+                                        return (
+                                            <span className="text-gray-700">
+                                                {payload?.status}: {payload?.value}%
+                                            </span>
+                                        );
+                                    }}
                                 />
                             </PieChart>
                         </ResponsiveContainer>
