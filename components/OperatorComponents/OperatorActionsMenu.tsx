@@ -8,14 +8,25 @@ interface OperatorActionsMenuProps {
     open: boolean;
     onOpen: () => void;
     onClose: () => void;
-    team: {
-        no: number;
-        teamName: string;
-    };
     onTeamDetails?: () => void;
+    onTeamPhotos?: () => void;
+    onTeamVideos?: () => void;
+    onEditTeamName?: () => void;
+    onShowTeamInfo?: () => void;
+    onDeleteTeam?: () => void;
 }
 
-const OperatorActionsMenu: React.FC<OperatorActionsMenuProps> = ({ open, onOpen, onClose, team, onTeamDetails }) => {
+const OperatorActionsMenu: React.FC<OperatorActionsMenuProps> = ({
+    open,
+    onOpen,
+    onClose,
+    onTeamDetails,
+    onTeamPhotos,
+    onTeamVideos,
+    onEditTeamName,
+    onShowTeamInfo,
+    onDeleteTeam
+}) => {
     const menuRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -62,23 +73,23 @@ const OperatorActionsMenu: React.FC<OperatorActionsMenuProps> = ({ open, onOpen,
                         <AiOutlineInfoCircle />
                         Team Details
                     </button>
-                    <button className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
+                    <button className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2" onClick={onTeamPhotos}>
                         <BsImages />
                         Team Pictures
                     </button>
-                    <button className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
+                    <button className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2" onClick={onTeamVideos}>
                         <BsCameraVideo />
                         Team Videos
                     </button>
-                    <button className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
+                    <button className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2" onClick={onEditTeamName}>
                         <FaRegEdit />
                         Edit Team Name
                     </button>
-                    <button className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
+                    <button className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2" onClick={onShowTeamInfo}>
                         <AiOutlineInfoCircle />
                         Show Team Info
                     </button>
-                    <button className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-red-600">
+                    <button className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-red-600" onClick={onDeleteTeam}>
                         <MdDelete />
                         Delete Team
                     </button>

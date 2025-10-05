@@ -66,12 +66,10 @@ const Map: React.FC<MapProps> = ({ teams, selectedTeamNo }) => {
         } else {
             initMap();
         }
-        // eslint-disable-next-line
     }, []);
 
     useEffect(() => {
         updateMarkers();
-        // eslint-disable-next-line
     }, [teams, selectedTeamNo]);
 
     return (

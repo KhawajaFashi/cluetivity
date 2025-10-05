@@ -1,11 +1,18 @@
 import React from 'react';
-import { TemplateTable, templateArray, Template, TemplateDetail } from '@/lib/routeTemplates';
+import { templateArray, Template } from '@/lib/routeTemplates';
+
+type ErrorState = {
+    shareCode?: string;
+    templateId?: string;
+    routeName?: string;
+    playingTime?: string;
+};
 
 interface RouteTemplateSelectProps {
     templateId: string;
     setTemplateId: (id: string) => void;
     errors: { templateId?: string };
-    setErrors: React.Dispatch<React.SetStateAction<any>>;
+    setErrors: React.Dispatch<React.SetStateAction<ErrorState>>;
     setSelectedTemplate: (id: string) => void;
     setShowPopup: (show: boolean) => void;
 }
@@ -22,7 +29,7 @@ const RouteTemplateSelect: React.FC<RouteTemplateSelectProps> = ({
         <h4 className="text-lg font-medium mb-3">Choose Language</h4>
         <select
             value={templateId || ''}
-            onChange={(e) => { setTemplateId(e.target.value); setErrors((prev: any) => ({ ...prev, templateId: undefined })); }}
+            onChange={(e) => { setTemplateId(e.target.value); setErrors((prev: ErrorState) => ({ ...prev, templateId: undefined })); }}
             className="w-full border border-gray-200 px-3 py-2 text-[13px] rounded focus:outline-none focus:ring-1 focus:ring-sky-400"
         >
             <option value="english">English</option>
@@ -38,7 +45,7 @@ const RouteTemplateSelect: React.FC<RouteTemplateSelectProps> = ({
                             name="template"
                             value={t.id}
                             checked={templateId === t.id}
-                            onChange={(e) => { setTemplateId(e.target.value); setErrors((prev: any) => ({ ...prev, templateId: undefined })); }}
+                            onChange={(e) => { setTemplateId(e.target.value); setErrors((prev: ErrorState) => ({ ...prev, templateId: undefined })); }}
                             className="mt-1"
                         />
                         <div>

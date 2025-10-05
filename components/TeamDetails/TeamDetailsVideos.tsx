@@ -3,7 +3,7 @@ import FilterPopup from "../OperatorComponents/OperatorFilterPopup";
 import { OperatorData } from "@/lib/LiveConfig";
 import Map from "../OperatorComponents/Google_map";
 import { FaArrowLeft } from "react-icons/fa";
-import TeamDetailsActionsMenu from "./TeamDetailsActionMenu";
+import Image from "next/image";
 
 interface Riddle {
     no: number;
@@ -14,7 +14,7 @@ interface Riddle {
     score: number;
 }
 
-interface TeamDetailsTableProps {
+interface TeamDetailsVideosProps {
     team: {
         no: number;
         teamName: string;
@@ -24,7 +24,7 @@ interface TeamDetailsTableProps {
     OperatorData: OperatorData;
 }
 
-const TeamDetailsTable: React.FC<TeamDetailsTableProps> = ({ team, onBack, OperatorData }) => {
+const TeamDetailsVideos: React.FC<TeamDetailsVideosProps> = ({ team, onBack, OperatorData }) => {
     const [mapView, setMapView] = useState<"map" | "satellite">("map");
     const [selectedTeam, setSelectedTeam] = useState<number | null>(null);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -32,7 +32,7 @@ const TeamDetailsTable: React.FC<TeamDetailsTableProps> = ({ team, onBack, Opera
     const { teams } = OperatorData ?? {};
     const filterButtonRef = useRef<HTMLDivElement | null>(null);
 
-    const [menuOpenIdx, setMenuOpenIdx] = useState<number | null>(null);
+    // const [menuOpenIdx, setMenuOpenIdx] = useState<number | null>(null);
     // const [showTeamDetailsIdx, setShowTeamDetailsIdx] = useState<number | null>(null);
     const [scoreModalIdx, setScoreModalIdx] = useState<number | null>(null);
     const [scoreType, setScoreType] = useState<'add' | 'subtract'>('add');
@@ -144,40 +144,12 @@ const TeamDetailsTable: React.FC<TeamDetailsTableProps> = ({ team, onBack, Opera
 
                 {/* <h2 className="text-lg font-semibold mb-4">Team Details: {team.teamName}</h2> */}
                 <div className="w-[60%] max-lg:w-full bg-white rounded-lg h-100 shadow-sm overflow-auto flex flex-col justify-between">
-                    <table className="w-full text-[12px] overflow-auto">
-                        <thead className="bg-[#000f24] text-white">
-                            <tr>
-                                <th className="px-2 py-4 text-center text-sm font-medium">No</th>
-                                <th className="px-2 py-4 text-center text-sm font-medium">Riddle Name</th>
-                                <th className="px-2 py-4 text-center text-sm font-medium">Episode</th>
-                                <th className="px-2 py-4 text-center text-sm font-medium">Riddle Type</th>
-                                <th className="px-2 py-4 text-center text-sm font-medium">Status</th>
-                                <th className="px-2 py-4 text-center text-sm font-medium">Score</th>
-                                <th className="px-2 py-4 text-center text-sm font-medium">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200">
-                            {team.riddles?.map((riddle, index) => (
-                                <tr key={riddle.no}>
-                                    <td className="px-2 py-2 text-center">{riddle.no}</td>
-                                    <td className="px-2 py-2 text-center">{riddle.riddleName}</td>
-                                    <td className="px-2 py-2 text-center">{riddle.episode}</td>
-                                    <td className="px-2 py-2 text-center">{riddle.riddleType}</td>
-                                    <td className="px-2 py-2 text-center">{riddle.status}</td>
-                                    <td className="px-2 py-2 text-center">{riddle.score}</td>
-                                    <td className="px-2 py-1 text-center relative">
-                                        <TeamDetailsActionsMenu
-                                            open={menuOpenIdx === index}
-                                            onOpen={() => setMenuOpenIdx(index)}
-                                            onClose={() => setMenuOpenIdx(null)}
-                                            team={team}
-                                            onTeamDetails={() => { setScoreModalIdx(index); setMenuOpenIdx(null); }}
-                                        />
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    <div className="flex flex-wrap gap-6 justify-start items-start p-4">
+                        {/* Replace these src URLs with real team photo URLs */}
+                        <Image src="/profile.png" alt="Team Photo 1" width={1000} height={1000} className="w-48 h-40 object-cover rounded-lg shadow" />
+                        <Image src="/profile.png" alt="Team Photo 1" width={1000} height={1000} className="w-48 h-40 object-cover rounded-lg shadow" />
+                        <Image src="/BO.jpg" alt="Team Photo 2" width={1000} height={1000} className="w-48 h-40 object-cover rounded-lg shadow" />
+                    </div>
                     <button
                         className="w-24 flex items-center justify-center gap-2 px-5 py-1 border-1 border-gray-200 font-medium rounded hover:bg-sky-400 cursor-pointer hover:text-white transition-all duration-300 m-4"
                         onClick={onBack}
@@ -192,4 +164,4 @@ const TeamDetailsTable: React.FC<TeamDetailsTableProps> = ({ team, onBack, Opera
     );
 };
 
-export default TeamDetailsTable;
+export default TeamDetailsVideos;

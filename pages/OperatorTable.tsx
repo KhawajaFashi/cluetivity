@@ -1,11 +1,17 @@
 "use client";
 import React, { useRef, useState } from "react";
+import AnimateShowdown from '@/components/OperatorComponents/AnimateShowdown';
 import OperatorActionsMenu from '@/components/OperatorComponents/OperatorActionsMenu';
 import TeamDetailsTable from '@/components/TeamDetails/TeamDetailsTable';
+import TeamDetailsPhotos from '@/components/TeamDetails/TeamDetailsPhotos';
+import TeamDetailsVideos from '@/components/TeamDetails/TeamDetailsVideos';
 import Map from "../components/OperatorComponents/Google_map";
 import { OperatorData } from "@/lib/LiveConfig";
 import FilterPopup from "../components/OperatorComponents/OperatorFilterPopup";
+import TeamDetailsEdit from "@/components/TeamDetails/TeamDetailsEdit";
+import TeamDetailsInfo from "@/components/TeamDetails/TeamDetailsInfo";
 
+type ActiveView = "details" | "photos" | "videos" | "edit" | "table" | "info" | "delete" | null;
 interface Riddle {
     no: number;
     riddleName: string;
@@ -37,15 +43,22 @@ const OperatorTable: React.FC<OperatorTableProps> = ({ OperatorData }) => {
     const [selectedTeam, setSelectedTeam] = useState<number | null>(null);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-    const { teams } = OperatorData ?? {};
+    // Use local state for teams so we can remove rows
+    const [teamsState, setTeamsState] = useState<TeamData[]>(OperatorData?.teams ?? []);
+    const teams = teamsState;
     const filterButtonRef = useRef<HTMLDivElement | null>(null);
 
     const [menuOpenIdx, setMenuOpenIdx] = useState<number | null>(null);
     const [showTeamDetailsIdx, setShowTeamDetailsIdx] = useState<number | null>(null);
+    const [activeView, setActiveView] = useState<ActiveView>(null);
+    const [editTeamName, setEditTeamName] = useState<string>("");
+    const [deleteConfirmText, setDeleteConfirmText] = useState("");
+    const [showAnimateShowdown, setShowAnimateShowdown] = useState(false);
 
-    // Show TeamDetailsTable if requested
+
+    // Show TeamDetailsTable or TeamDetailsPhotos or TeamDetailsVideos if requested
+    let detailsContent: React.ReactNode = null;
     if (showTeamDetailsIdx !== null && teams && teams[showTeamDetailsIdx]) {
-        // Provide sample riddles if not present
         const team = teams[showTeamDetailsIdx];
         const riddles = [
             { no: 1, riddleName: "Start the Mission", episode: 1, riddleType: "Augmented Reality", status: "SOLVED", score: 1000 },
@@ -56,23 +69,83 @@ const OperatorTable: React.FC<OperatorTableProps> = ({ OperatorData }) => {
             { no: 6, riddleName: "Listening Device", episode: 6, riddleType: "Mini Game", status: "UNSOLVED", score: 0 },
             { no: 7, riddleName: "The Secret Safe", episode: 7, riddleType: "Augmented Reality", status: "UNSOLVED", score: 0 },
             { no: 8, riddleName: "The Antivirus", episode: 8, riddleType: "Multiple Choice", status: "UNSOLVED", score: 0 },
-            { no: 8, riddleName: "The Antivirus", episode: 8, riddleType: "Multiple Choice", status: "UNSOLVED", score: 0 },
-            { no: 8, riddleName: "The Antivirus", episode: 8, riddleType: "Multiple Choice", status: "UNSOLVED", score: 0 },
+            { no: 9, riddleName: "Groundwater Access", episode: 9, riddleType: "Mini Game", status: "UNSOLVED", score: 0 },
+            { no: 10, riddleName: "Server Room", episode: 10, riddleType: "Augmented Reality", status: "UNSOLVED", score: 0 },
         ];
-        return (
-            <div className="flex flex-col p-4 w-full">
-                <TeamDetailsTable
+        if (activeView === 'photos') {
+            detailsContent = (
+                <TeamDetailsPhotos
                     team={{ ...team, riddles }}
-                    onBack={() => setShowTeamDetailsIdx(null)}
+                    onBack={() => { setActiveView(null); setShowTeamDetailsIdx(null); }}
                     OperatorData={OperatorData}
                 />
+            );
+        } else if (activeView === 'videos') {
+            detailsContent = (
+                <TeamDetailsVideos
+                    team={{ ...team, riddles }}
+                    onBack={() => { setActiveView(null); setShowTeamDetailsIdx(null); }}
+                    OperatorData={OperatorData}
+                />
+            );
+        } else if (activeView === 'table') {
+            detailsContent = (
+                <TeamDetailsTable
+                    team={{ ...team, riddles }}
+                    onBack={() => { setActiveView(null); setShowTeamDetailsIdx(null); }}
+                    OperatorData={OperatorData}
+                />
+            );
+        }
+    }
+
+    // Fix: Only show detailsContent if not null, else show main table UI
+    if (detailsContent !== null) {
+        return (
+            <div>
+                {detailsContent}
             </div>
         );
     }
 
     return (
         <div className="flex flex-col p-4 w-full">
-            {/* Header Section */}
+            {/* Delete confirmation popup */}
+            {activeView === 'delete' && showTeamDetailsIdx !== null && teams[showTeamDetailsIdx] && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.4)]">
+                    <div className="bg-white rounded-lg shadow-lg w-[400px] p-6 relative flex flex-col items-center">
+                        <button className="absolute top-3 right-4 text-gray-400 text-xl" onClick={() => { setActiveView(null); setShowTeamDetailsIdx(null); setDeleteConfirmText(""); }}>
+                            ×
+                        </button>
+                        <div className="flex flex-col items-center">
+                            <div className="text-red-500 text-5xl mb-2">&#33;</div>
+                            <h2 className="text-lg font-semibold mb-2">Delete {teams[showTeamDetailsIdx].teamName}</h2>
+                            <label className="mb-4 text-center">Type <span className="font-bold">DELETE</span> to confirm</label>
+                            <input
+                                type="text"
+                                className="border px-3 py-2 rounded w-full mb-4 text-center"
+                                value={deleteConfirmText}
+                                onChange={e => setDeleteConfirmText(e.target.value)}
+                                placeholder="DELETE"
+                            />
+                            <div className="flex gap-2 mt-2">
+                                <button className="px-4 py-2 bg-gray-100 rounded" onClick={() => { setActiveView(null); setShowTeamDetailsIdx(null); setDeleteConfirmText(""); }}>Cancel</button>
+                                <button
+                                    className={`px-4 py-2 bg-[#00A3FF] text-white rounded ${deleteConfirmText === 'DELETE' ? '' : 'opacity-50 cursor-not-allowed'}`}
+                                    disabled={deleteConfirmText !== 'DELETE'}
+                                    onClick={() => {
+                                        setTeamsState(prev => prev.filter((_, idx) => idx !== showTeamDetailsIdx));
+                                        setActiveView(null);
+                                        setShowTeamDetailsIdx(null);
+                                        setDeleteConfirmText("");
+                                    }}
+                                >Confirm</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {/* Edit Team Name Modal overlays table, table remains visible */}
             <div className="flex max-lg:flex-col max-lg:gap-3 justify-between items-center mb-6 font-semibold">
                 {/* Filter Dropdown */}
                 <div
@@ -111,10 +184,17 @@ const OperatorTable: React.FC<OperatorTableProps> = ({ OperatorData }) => {
                     />
                 </div>
                 {/* Animate Showdown Button */}
-                <button className="px-3 py-1 bg-[#00A3FF] text-white rounded-sm">
+                <button className="px-3 py-1 bg-[#00A3FF] text-white rounded-sm" onClick={() => setShowAnimateShowdown(true)}>
                     Animate Showdown
                 </button>
             </div>
+            {/* Animate Showdown Popup */}
+            {showAnimateShowdown && (
+                <AnimateShowdown
+                    teams={teams}
+                    onClose={() => setShowAnimateShowdown(false)}
+                />
+            )}
             {/* Main Content */}
             <div className="flex max-lg:flex-col gap-6 h-100">
                 {/* Map Section */}
@@ -186,8 +266,13 @@ const OperatorTable: React.FC<OperatorTableProps> = ({ OperatorData }) => {
                                             open={menuOpenIdx === index}
                                             onOpen={() => setMenuOpenIdx(index)}
                                             onClose={() => setMenuOpenIdx(null)}
-                                            team={team}
-                                            onTeamDetails={() => { setShowTeamDetailsIdx(index); setMenuOpenIdx(null); }}
+                                            onTeamDetails={() => { setShowTeamDetailsIdx(index); setActiveView('table'); setMenuOpenIdx(null); }}
+                                            onTeamPhotos={() => { setShowTeamDetailsIdx(index); setActiveView('photos'); setMenuOpenIdx(null); }}
+                                            onTeamVideos={() => { setShowTeamDetailsIdx(index); setActiveView('videos'); setMenuOpenIdx(null); }}
+                                            onEditTeamName={() => { setShowTeamDetailsIdx(index); setActiveView('edit'); setMenuOpenIdx(null); }}
+                                            onShowTeamInfo={() => { setShowTeamDetailsIdx(index); setActiveView('info'); setMenuOpenIdx(null); }}
+                                            onDeleteTeam={() => { setShowTeamDetailsIdx(index); setActiveView('delete'); setMenuOpenIdx(null); }}
+                                        // Add similar handlers for videos, edit name, info, delete
                                         />
                                     </td>
                                 </tr>
@@ -196,8 +281,14 @@ const OperatorTable: React.FC<OperatorTableProps> = ({ OperatorData }) => {
                     </table>
                 </div>
             </div>
+            {activeView === 'edit' &&
+                <TeamDetailsEdit editTeamName={editTeamName} setEditTeamName={setEditTeamName} setActiveView={setActiveView} />
+            }
+            {activeView === 'info' &&
+                <TeamDetailsInfo setActiveView={setActiveView} />
+            }
         </div>
     );
-};
+}
 
 export default OperatorTable;

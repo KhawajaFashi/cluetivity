@@ -12,7 +12,7 @@ interface TeamDetailsActionsMenuProps {
     onTeamDetails?: () => void;
 }
 
-const TeamDetailsActionsMenu: React.FC<TeamDetailsActionsMenuProps> = ({ open, onOpen, onClose, team, onTeamDetails }) => {
+const TeamDetailsActionsMenu: React.FC<TeamDetailsActionsMenuProps> = ({ open, onOpen, onClose, onTeamDetails }) => {
     const menuRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
