@@ -22,7 +22,7 @@ A modern dashboard application built with Next.js 15, React 19, and Tailwind CSS
 ├── components/
 │   ├── Sidebar.tsx           # Navigation sidebar
 │   ├── Header.tsx            # Top header with user profile
-│   ├── BlackoutCard.tsx      # Blackout game information card
+│   ├── Game3Card.tsx      # Game3 game information card
 │   ├── NewsFeedCard.tsx      # News feed card
 │   └── SupportButton.tsx     # Floating support button
 └── public/                   # Static assets

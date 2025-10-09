@@ -31,6 +31,8 @@ export async function middleware(req: NextRequest) {
         console.error('Error verifying token');
         return NextResponse.redirect(new URL('/login', req.url));
     }
+    // localStorage.setItem('uid', token);
+
 
     return NextResponse.next();
 }

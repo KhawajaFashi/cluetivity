@@ -1,4 +1,5 @@
 import User from '../models/user.js';
+import { getUser } from '../service/auth.js';
 
 
 async function handleUserSignup(req, res) {
@@ -40,7 +41,9 @@ async function handleUserLogout(req, res) {
 async function verify_login(req, res) {
     if (req.user) {
         // console.log("Inside verify_login", req.cookies);
-        res.status(200).json({ message: "User is logged in", valid: true });
+        const user = getUser(req.token);
+        console.log("User: ",user);
+        res.status(200).json({ message: "User is logged in", valid: true, user: user });
     }
     else {
         res.status(401).json({ message: "User is not logged in", valid: false });
@@ -48,4 +51,25 @@ async function verify_login(req, res) {
 }
 
 
-export { handleUserSignup, handleUserLogin, handleUserLogout, verify_login };
+async function uploadData(req, res) {
+    const data = req.body.profileData;
+    const userId = req.user.id;
+    try {
+        await User.findByIdAndUpdate(userId, { $set: data });
+        res.status(200).json({ message: "Profile updated successfully" });
+    }
+    catch (e) {
+        console.log(e);
+        res.status(404).json({ message: "Profile has not been updated" });
+    }
+}
+
+
+
+export {
+    handleUserSignup,
+    handleUserLogin,
+    handleUserLogout,
+    verify_login,
+    uploadData
+};

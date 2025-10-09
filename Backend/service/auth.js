@@ -31,4 +31,5 @@ function getUser(token) {
     }
 }
 
+
 export { generateToken, validateToken, getUser };
